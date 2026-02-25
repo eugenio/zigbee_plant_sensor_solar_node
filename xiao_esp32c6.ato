@@ -13,6 +13,8 @@ import Capacitor
 import Resistor
 
 from "parts/Espressif_Systems_ESP32_C6_MINI_1_N4/Espressif_Systems_ESP32_C6_MINI_1_N4.ato" import Espressif_Systems_ESP32_C6_MINI_1_N4_package
+from "parts/Korean_Hroparts_Elec_TYPE_C_31_M_12/Korean_Hroparts_Elec_TYPE_C_31_M_12.ato" import Korean_Hroparts_Elec_TYPE_C_31_M_12_package
+from "parts/XKB_Connectivity_TS_1187A_B_A_B/XKB_Connectivity_TS_1187A_B_A_B.ato" import XKB_Connectivity_TS_1187A_B_A_B_package
 
 module ESP32_C6_MINI_1:
     """ESP32-C6-MINI-1-N4 driver with supporting circuitry."""
@@ -58,6 +60,46 @@ module ESP32_C6_MINI_1:
     r_boot.package = "0402"
     power.hv ~> r_boot ~> ic.IO9
 
+    # --- Boot button (GPIO9 to GND) ---
+    btn_boot = new XKB_Connectivity_TS_1187A_B_A_B_package
+    btn_boot.A ~ ic.IO9
+    btn_boot.B ~ ic.IO9
+    btn_boot.C ~ power.lv
+    btn_boot.D ~ power.lv
+
+    # --- Reset button (EN to GND) ---
+    btn_reset = new XKB_Connectivity_TS_1187A_B_A_B_package
+    btn_reset.A ~ ic.EN
+    btn_reset.B ~ ic.EN
+    btn_reset.C ~ power.lv
+    btn_reset.D ~ power.lv
+
+    # --- USB-C connector for programming ---
+    usb_conn = new Korean_Hroparts_Elec_TYPE_C_31_M_12_package
+
+    # VBUS (5V from USB host)
+    power_usb = new ElectricPower
+    power_usb.hv ~ usb_conn.VBUS
+    power_usb.lv ~ usb_conn.GND
+    power_usb.lv ~ usb_conn.EH
+    power_usb.lv ~ power.lv
+
+    # CC1/CC2: 5.1k pull-down to GND (advertise as USB device/sink)
+    r_cc1 = new Resistor
+    r_cc1.resistance = 5.1kohm +/- 5%
+    r_cc1.package = "0402"
+    r_cc2 = new Resistor
+    r_cc2.resistance = 5.1kohm +/- 5%
+    r_cc2.package = "0402"
+    usb_conn.CC1 ~> r_cc1 ~> power.lv
+    usb_conn.CC2 ~> r_cc2 ~> power.lv
+
+    # USB 2.0 data lines (D+/D- pairs shorted on connector)
+    usb_conn.DP1 ~ ic.IO13
+    usb_conn.DP2 ~ ic.IO13
+    usb_conn.DN1 ~ ic.IO12
+    usb_conn.DN2 ~ ic.IO12
+
     # --- I2C bus (GPIO6=SDA, GPIO7=SCL) ---
     i2c = new I2C
     i2c.sda.line ~ ic.IO6
@@ -72,14 +114,6 @@ module ESP32_C6_MINI_1:
     uart_rx.line ~ ic.RXD0
     uart_tx.reference ~ power
     uart_rx.reference ~ power
-
-    # --- USB (GPIO12=D-, GPIO13=D+) ---
-    usb_dm = new ElectricLogic
-    usb_dp = new ElectricLogic
-    usb_dm.line ~ ic.IO12
-    usb_dp.line ~ ic.IO13
-    usb_dm.reference ~ power
-    usb_dp.reference ~ power
 
     # --- GPIOs exposed for user ---
     gpio0 = new ElectricLogic
