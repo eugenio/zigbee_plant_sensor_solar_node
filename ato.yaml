@@ -1,22 +1,20 @@
-requires-atopile: "0.12.5"
-
+requires-atopile: ^0.14.1004
 paths:
   src: ./
   layout: ./layouts
-
 builds:
   default:
     entry: main.ato:App
-
-# This metadata is only required for publishing
-# Uncomment it and fill out the fields to publish your package
-# package:
-#   identifier: # fill me!/zigbee_plant_sensor_solar_node
-#   repository: # fill me!
-#   version: "0.1.0"  # recommended first version
-#   authors:
-#     - name: Eugenio
-#       email: eugeniolcv@gmail.com
-#   summary: # fill me!
-#   license: MIT license
-#   homepage: # fill me!
+dependencies:
+- type: registry
+  identifier: atopile/sensirion-sht40
+  release: 0.2.0
+- type: registry
+  identifier: atopile/vishay-veml7700
+  release: 0.4.0
+- type: registry
+  identifier: atopile/maxim-max17048
+  release: 0.2.0
+- type: registry
+  identifier: atopile/batteries
+  release: 0.2.3

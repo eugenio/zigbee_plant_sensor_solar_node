@@ -1,4 +1,78 @@
-"""Brand new atopile project!"""
+"""
+Zigbee Plant Sensor Solar Node.
+Solar-powered environmental monitoring node using ESP32-C6-MINI-1 (Zigbee/Thread).
+Sensors: temp/humidity (SHT40), light (VEML7700), battery (MAX17048).
+External sensors via Qwiic: soil moisture, EC/conductivity.
+"""
+
+#pragma experiment("BRIDGE_CONNECT")
+
+import ElectricPower
+import I2C
+import Capacitor
+import Resistor
+
+from "xiao_esp32c6.ato" import ESP32_C6_MINI_1
+from "micromppt.ato" import Micromppt
+from "ldo.ato" import HT7833_LDO
+from "atopile/sensirion-sht40/sensirion-sht40.ato" import Sensirion_SHT40
+from "atopile/vishay-veml7700/vishay-veml7700.ato" import Vishay_VEML7700
+from "atopile/maxim-max17048/maxim-max17048.ato" import Maxim_MAX17048
+from "sparkfun-qwiic/sparkfun-qwiic.ato" import QwiicVertical
 
 module App:
-    pass
+    """Solar-powered Zigbee plant sensor node."""
+
+    # --- Power Rails ---
+    power_bat = new ElectricPower
+    power_bat.voltage = 3.0V to 4.2V
+    power_3v3 = new ElectricPower
+    power_3v3.voltage = 3.3V +/- 3%
+
+    # --- Solar MPPT Charger ---
+    mppt = new Micromppt
+
+    # Battery rail from MPPT output
+    mppt.Vbat ~ power_bat
+
+    # --- 3.3V LDO (battery -> 3.3V) ---
+    ldo = new HT7833_LDO
+    power_bat ~ ldo.power_in
+    ldo.power_out ~ power_3v3
+
+    # --- MCU ---
+    mcu = new ESP32_C6_MINI_1
+    power_3v3 ~ mcu.power
+
+    # --- I2C Bus ---
+    i2c_bus = new I2C
+    mcu.i2c ~ i2c_bus
+
+    # --- Sensors ---
+
+    # Temperature & Humidity (SHT40, I2C addr 0x44)
+    sht40 = new Sensirion_SHT40
+    power_3v3 ~ sht40.power
+    i2c_bus ~ sht40.i2c
+
+    # Ambient Light (VEML7700, I2C addr 0x10)
+    veml7700 = new Vishay_VEML7700
+    power_3v3 ~ veml7700.power
+    i2c_bus ~ veml7700.i2c
+
+    # Battery Fuel Gauge (MAX17048, I2C addr 0x36)
+    fuel_gauge = new Maxim_MAX17048
+    power_3v3 ~ fuel_gauge.power
+    power_bat ~ fuel_gauge.battery_interface
+    i2c_bus ~ fuel_gauge.i2c
+
+    # --- Qwiic Connectors for external sensors ---
+    # Qwiic 1: Soil moisture sensor (external I2C module)
+    qwiic_soil = new QwiicVertical
+    power_3v3 ~ qwiic_soil.power
+    i2c_bus ~ qwiic_soil.i2c
+
+    # Qwiic 2: EC/Conductivity sensor (external I2C module)
+    qwiic_ec = new QwiicVertical
+    power_3v3 ~ qwiic_ec.power
+    i2c_bus ~ qwiic_ec.i2c

@@ -1,0 +1,64 @@
+#pragma experiment("TRAITS")
+import has_datasheet
+import has_designator_prefix
+import has_part_picked
+import is_atomic_part
+import is_auto_generated
+
+component Espressif_Systems_ESP32_C6_MINI_1_N4_package:
+    # This trait marks this file as auto-generated
+    # If you want to manually change it, remove the trait
+    trait is_auto_generated<system="ato_part", source="easyeda:C5736265", date="2026-02-25T08:27:55.144285+00:00", checksum="ce9f841deab92f5542366ec8c961b588c633ec0737107161ee532bf415ef99f7">
+
+    trait is_atomic_part<manufacturer="Espressif Systems", partnumber="ESP32-C6-MINI-1-N4", footprint="WIFIM-SMD_61P-L16.6-W13.2-P0.80-ESP32-C6-MINI-1-N4.kicad_mod", symbol="ESP32-C6-MINI-1-N4.kicad_sym", model="WIFIM-SMD_61P-L16.6-W13.2-P0.80-ESP32-C6-MINI-1-N4.STEP">
+    trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C5736265", manufacturer="Espressif Systems", partno="ESP32-C6-MINI-1-N4">
+    trait has_designator_prefix<prefix="U">
+    trait has_datasheet<datasheet="https://www.lcsc.com/datasheet/lcsc_datasheet_2410301608_Espressif-Systems-ESP32-C6-MINI-1-N4_C5736265.pdf">
+
+    # pins
+    signal EN ~ pin 8
+    signal GND ~ pin 1
+    GND ~ pin 2
+    GND ~ pin 11
+    GND ~ pin 14
+    GND ~ pin 36
+    GND ~ pin 37
+    GND ~ pin 38
+    GND ~ pin 39
+    GND ~ pin 40
+    GND ~ pin 41
+    GND ~ pin 42
+    GND ~ pin 43
+    GND ~ pin 44
+    GND ~ pin 45
+    GND ~ pin 46
+    GND ~ pin 47
+    GND ~ pin 48
+    GND ~ pin 49
+    GND ~ pin 50
+    GND ~ pin 51
+    GND ~ pin 52
+    GND ~ pin 53
+    signal IO0 ~ pin 12
+    signal IO1 ~ pin 13
+    signal IO2 ~ pin 5
+    signal IO3 ~ pin 6
+    signal IO4 ~ pin 9
+    signal IO5 ~ pin 10
+    signal IO6 ~ pin 15
+    signal IO7 ~ pin 16
+    signal IO8 ~ pin 22
+    signal IO9 ~ pin 23
+    signal IO12 ~ pin 17
+    signal IO13 ~ pin 18
+    signal IO14 ~ pin 19
+    signal IO15 ~ pin 20
+    signal IO18 ~ pin 24
+    signal IO19 ~ pin 25
+    signal IO20 ~ pin 26
+    signal IO21 ~ pin 27
+    signal IO22 ~ pin 28
+    signal IO23 ~ pin 29
+    signal P3V3 ~ pin 3
+    signal RXD0 ~ pin 30
+    signal TXD0 ~ pin 31

@@ -1,0 +1,47 @@
+#pragma experiment("BRIDGE_CONNECT")
+
+"""
+HT7833 fixed 3.3V 500mA LDO driver.
+Low quiescent current (~4uA), ideal for battery-powered deep sleep applications.
+"""
+
+import ElectricPower
+import Capacitor
+
+from "parts/Holtek_Semicon_HT7833/Holtek_Semicon_HT7833.ato" import Holtek_Semicon_HT7833_package
+
+module HT7833_LDO:
+    """HT7833 fixed 3.3V LDO with decoupling."""
+
+    ic = new Holtek_Semicon_HT7833_package
+
+    # Power interfaces
+    power_in = new ElectricPower
+    power_out = new ElectricPower
+
+    # Input: 2.0V to 8.0V
+    assert power_in.voltage within 2.0V to 8.0V
+
+    # Output: fixed 3.3V
+    assert power_out.voltage within 3.3V +/- 3%
+
+    # Connections
+    power_in.hv ~ ic.VIN
+    power_in.lv ~ ic.GND
+    power_out.hv ~ ic.VOUT
+    power_out.lv ~ ic.GND
+
+    # CE tied to VIN (always enabled)
+    ic.CE ~ ic.VIN
+
+    # Input decoupling
+    c_in = new Capacitor
+    c_in.capacitance = 1uF +/- 20%
+    c_in.package = "0402"
+    power_in.hv ~> c_in ~> power_in.lv
+
+    # Output decoupling
+    c_out = new Capacitor
+    c_out.capacitance = 1uF +/- 20%
+    c_out.package = "0402"
+    power_out.hv ~> c_out ~> power_out.lv

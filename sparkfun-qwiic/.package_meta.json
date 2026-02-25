@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "identifier": "atopile/sparkfun-qwiic",
+  "version": "0.2.0",
+  "source": {
+    "type": "registry",
+    "url": "https://packages.atopileapi.com",
+    "ref": null,
+    "path": null
+  },
+  "installed_at": "2026-02-25T08:55:22.760358",
+  "installed_by": "0.14.1004",
+  "file_checksums": {
+    "ato.yaml": "31219c2bf24c2656459d109f8389afbefed61ca43e5a1bdb3b75cf8b63abcf70",
+    "README.md": "87bc79818993fca359e796bc4cf2084c8bd6b0405e0dcf05b3e53c822c4d9fdb",
+    "sparkfun-qwiic.ato": "36042fa3ac2d194647b68e6f8f7d1871418bc9dade9ac4b45240464dae89a134",
+    "usage.ato": "e08302bd6beecca07799632860afe9f66381210a8822e7e25acac1671bd6b081",
+    "parts\\JST_Sales_America_BM04B_SRSS_TB_LF__SN\\BM04B-SRSS-TB(LF)(SN).kicad_sym": "11077a4ab18fcd00be77f6139da368b0040c8b2e918a1b15c503ecf21d6a7218",
+    "parts\\JST_Sales_America_BM04B_SRSS_TB_LF__SN\\CONN-SMD_4P-L6.0-W2.9-H4.3-P1.0.step": "796361407eb680a97268522190f5dac7e55d6c6c63cad8510f4f35429e27fa5e",
+    "parts\\JST_Sales_America_BM04B_SRSS_TB_LF__SN\\CONN-SMD_BM04B-SRSS-TB.kicad_mod": "33b27fcf33b568330ee46da9962e00f0c1e23f0b7c37ebe52e163fa723506348",
+    "parts\\JST_Sales_America_BM04B_SRSS_TB_LF__SN\\JST_Sales_America_BM04B_SRSS_TB_LF__SN.ato": "7338ef5e7e52cf24013596e7e8a630e47170aba339d22e9d6a1fff992d8d09c1",
+    "parts\\JST_Sales_America_SM04B_SRSS_TB_LF__SN\\CONN-SMD_4P-P1.00_SM04B-SRSS-TB-LF-SN.kicad_mod": "a3831171562659c1cfc5250213cce3983d9c4d827aeef60c5f9f90e382dd3053",
+    "parts\\JST_Sales_America_SM04B_SRSS_TB_LF__SN\\CONN-SMD_SR1.00-WS-4P.step": "819e407e3418ce15654a4e5c71526f4e475b9e0d4833439d3e0a6023ab4b90c3",
+    "parts\\JST_Sales_America_SM04B_SRSS_TB_LF__SN\\JST_Sales_America_SM04B_SRSS_TB_LF__SN.ato": "ed0e7d3e33172d80be6575b0072800f29a499e4851e7151b8d93df8d9bf4e272",
+    "parts\\JST_Sales_America_SM04B_SRSS_TB_LF__SN\\SM04B-SRSS-TB(LF)(SN).kicad_sym": "dc18c92d6be606e2e1efb24c63d900ef0d49c3e30a3f1abf092ee2f11ad5533e",
+    "parts\\UNI_ROYAL_0402WGF1002TCE\\0402WGF1002TCE.kicad_sym": "81c087f94ceab9f615ba1aa036628532fbae2ff8c6cfc259e8361c72c016ccde",
+    "parts\\UNI_ROYAL_0402WGF1002TCE\\R0402.kicad_mod": "7a8075b8a66ae0fd5021888c14e547841867ace81932a4dc6ee5b5f312f7f38c",
+    "parts\\UNI_ROYAL_0402WGF1002TCE\\R0402_L1.0-W0.5-H0.4.step": "134d58dd68899b29f9e19def208de6690d06010e01c304866fbd4d81c8640aa6",
+    "parts\\UNI_ROYAL_0402WGF1002TCE\\UNI_ROYAL_0402WGF1002TCE.ato": "07e490b293aeecda119c9920613b450954240ba2bb6d74ac9a122e648d959f93",
+    "layouts\\horizontal\\fp-lib-table": "4c166ec74192bd103a8d8d70e7abf99301b59bfe8b9c203b78573ae190054872",
+    "layouts\\horizontal\\horizontal.kicad_pcb": "990fac0d9abbf4cff566459e27fa9ef01a913fb34bdc0813de928f3e5f9472dd",
+    "layouts\\horizontal\\horizontal.kicad_pro": "a1ba24a2240ddcbf85b45467ade76107f66e048e4c098731d47e3b890d0175a5",
+    "layouts\\usage\\fp-lib-table": "4c166ec74192bd103a8d8d70e7abf99301b59bfe8b9c203b78573ae190054872",
+    "layouts\\usage\\usage.kicad_pcb": "d385da379cb25633689b105b288623111160f45fea62a9b9c589a063299d4b22",
+    "layouts\\usage\\usage.kicad_pro": "3cd2ea8df97e191cc47ddfa9b722def2151c615a0cd7138f7507a1f00a1a792e",
+    "layouts\\vertical\\fp-lib-table": "4c166ec74192bd103a8d8d70e7abf99301b59bfe8b9c203b78573ae190054872",
+    "layouts\\vertical\\vertical.kicad_pcb": "3714655d1b3fbb0736d445efc34033278891a71d0d2fbe55cbee1cefaf55708c"
+  }
+}

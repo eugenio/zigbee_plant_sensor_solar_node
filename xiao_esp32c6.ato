@@ -1,0 +1,131 @@
+#pragma experiment("BRIDGE_CONNECT")
+
+"""
+ESP32-C6-MINI-1-N4 module driver.
+WiFi 6, BLE 5.0, Zigbee/Thread (IEEE 802.15.4).
+4MB flash, PCB antenna. LCSC: C5736265.
+"""
+
+import ElectricPower
+import ElectricLogic
+import I2C
+import Capacitor
+import Resistor
+
+from "parts/Espressif_Systems_ESP32_C6_MINI_1_N4/Espressif_Systems_ESP32_C6_MINI_1_N4.ato" import Espressif_Systems_ESP32_C6_MINI_1_N4_package
+
+module ESP32_C6_MINI_1:
+    """ESP32-C6-MINI-1-N4 driver with supporting circuitry."""
+
+    ic = new Espressif_Systems_ESP32_C6_MINI_1_N4_package
+
+    # --- Power ---
+    power = new ElectricPower
+    assert power.voltage within 3.0V to 3.6V
+    power.hv ~ ic.P3V3
+    power.lv ~ ic.GND
+
+    # Decoupling capacitors on 3V3
+    c_dec_1 = new Capacitor
+    c_dec_1.capacitance = 10uF +/- 20%
+    c_dec_1.package = "0402"
+    c_dec_2 = new Capacitor
+    c_dec_2.capacitance = 100nF +/- 20%
+    c_dec_2.package = "0402"
+    power.hv ~> c_dec_1 ~> power.lv
+    power.hv ~> c_dec_2 ~> power.lv
+
+    # --- EN (chip enable) with RC reset circuit ---
+    en = new ElectricLogic
+    en.line ~ ic.EN
+    en.reference ~ power
+
+    # 10k pull-up to keep chip enabled
+    r_en = new Resistor
+    r_en.resistance = 10kohm +/- 5%
+    r_en.package = "0402"
+    power.hv ~> r_en ~> ic.EN
+
+    # 1uF cap for power-on delay
+    c_en = new Capacitor
+    c_en.capacitance = 1uF +/- 20%
+    c_en.package = "0402"
+    ic.EN ~> c_en ~> power.lv
+
+    # --- Boot mode (GPIO9) pull-up for normal SPI boot ---
+    r_boot = new Resistor
+    r_boot.resistance = 10kohm +/- 5%
+    r_boot.package = "0402"
+    power.hv ~> r_boot ~> ic.IO9
+
+    # --- I2C bus (GPIO6=SDA, GPIO7=SCL) ---
+    i2c = new I2C
+    i2c.sda.line ~ ic.IO6
+    i2c.scl.line ~ ic.IO7
+    i2c.sda.reference ~ power
+    i2c.scl.reference ~ power
+
+    # --- UART0 (GPIO16=TX, GPIO17=RX) ---
+    uart_tx = new ElectricLogic
+    uart_rx = new ElectricLogic
+    uart_tx.line ~ ic.TXD0
+    uart_rx.line ~ ic.RXD0
+    uart_tx.reference ~ power
+    uart_rx.reference ~ power
+
+    # --- USB (GPIO12=D-, GPIO13=D+) ---
+    usb_dm = new ElectricLogic
+    usb_dp = new ElectricLogic
+    usb_dm.line ~ ic.IO12
+    usb_dp.line ~ ic.IO13
+    usb_dm.reference ~ power
+    usb_dp.reference ~ power
+
+    # --- GPIOs exposed for user ---
+    gpio0 = new ElectricLogic
+    gpio1 = new ElectricLogic
+    gpio2 = new ElectricLogic
+    gpio3 = new ElectricLogic
+    gpio4 = new ElectricLogic
+    gpio5 = new ElectricLogic
+    gpio8 = new ElectricLogic
+    gpio14 = new ElectricLogic
+    gpio15 = new ElectricLogic
+    gpio18 = new ElectricLogic
+    gpio19 = new ElectricLogic
+    gpio20 = new ElectricLogic
+    gpio21 = new ElectricLogic
+    gpio22 = new ElectricLogic
+    gpio23 = new ElectricLogic
+
+    gpio0.line ~ ic.IO0
+    gpio1.line ~ ic.IO1
+    gpio2.line ~ ic.IO2
+    gpio3.line ~ ic.IO3
+    gpio4.line ~ ic.IO4
+    gpio5.line ~ ic.IO5
+    gpio8.line ~ ic.IO8
+    gpio14.line ~ ic.IO14
+    gpio15.line ~ ic.IO15
+    gpio18.line ~ ic.IO18
+    gpio19.line ~ ic.IO19
+    gpio20.line ~ ic.IO20
+    gpio21.line ~ ic.IO21
+    gpio22.line ~ ic.IO22
+    gpio23.line ~ ic.IO23
+
+    gpio0.reference ~ power
+    gpio1.reference ~ power
+    gpio2.reference ~ power
+    gpio3.reference ~ power
+    gpio4.reference ~ power
+    gpio5.reference ~ power
+    gpio8.reference ~ power
+    gpio14.reference ~ power
+    gpio15.reference ~ power
+    gpio18.reference ~ power
+    gpio19.reference ~ power
+    gpio20.reference ~ power
+    gpio21.reference ~ power
+    gpio22.reference ~ power
+    gpio23.reference ~ power

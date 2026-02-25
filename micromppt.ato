@@ -1,0 +1,192 @@
+#pragma experiment("BRIDGE_CONNECT")
+
+"""
+MPPT Solar Battery Charger based on STMicroelectronics SPV1040T.
+Adapted from eigenlucy/micromppt (STEVAL-ISV006V2 reference design).
+"""
+
+import ElectricPower
+import ElectricLogic
+import Inductor
+import Capacitor
+import Resistor
+import Diode
+import Fuse
+from "parts/STMicroelectronics_SPV1040T/STMicroelectronics_SPV1040T.ato" import STMicroelectronics_SPV1040T_package
+from "parts/JST_Sales_America_B2B_PH_K_S_LF__SN/JST_Sales_America_B2B_PH_K_S_LF__SN.ato" import JST_Sales_America_B2B_PH_K_S_LF__SN_package
+from "parts/XySemi_XB3306D/XySemi_XB3306D.ato" import XySemi_XB3306D_package
+from "parts/TECH_PUBLIC_SRV05_4_P_T7/TECH_PUBLIC_SRV05_4_P_T7.ato" import TECH_PUBLIC_SRV05_4_P_T7_package
+from "parts/Littelfuse_0603L150SLYR/Littelfuse_0603L150SLYR.ato" import Littelfuse_0603L150SLYR_package
+
+module Micromppt:
+    """5W autonomous MPPT boost solar battery charger (SPV1040T)."""
+
+    # External interfaces
+    power = new ElectricPower
+    Vpv = new ElectricPower
+    Vbat = new ElectricPower
+
+    # Internal regulated PV rail
+    Vpvr = new ElectricPower
+
+    # JST PH 2-pin connectors for solar and battery
+    Vpv_Conn = new JST_Sales_America_B2B_PH_K_S_LF__SN_package
+    Vbat_Conn = new JST_Sales_America_B2B_PH_K_S_LF__SN_package
+    Vload_Conn = new JST_Sales_America_B2B_PH_K_S_LF__SN_package
+
+    # Solar panel connector wiring
+    Vpv.hv ~ Vpv_Conn.1
+    Vpv.lv ~ Vpv_Conn.2
+    power.lv ~ Vpv_Conn.2
+
+    # Direct PV pass-through (OVP bypassed)
+    Vpv ~ Vpvr
+
+    # Battery connector with reverse protection
+    Vbatr = new ElectricPower
+    Vbat.lv ~ power.lv
+    Vbatr.hv ~ Vbat_Conn.1
+    Vbatr.lv ~ Vbat_Conn.2
+
+    # SPV1040T MPPT IC
+    ic = new STMicroelectronics_SPV1040T_package
+
+    # Voltage divider for output voltage setting (Vout = 1.25 * (1 + R1/R2))
+    # R1=1M, R2=423k -> Vout ~4.2V (LiPo charge voltage)
+    R1 = new Resistor
+    R1.resistance = 1Mohm +/- 10%
+    R1.package = "0402"
+    R2 = new Resistor
+    R2.resistance = 423kohm +/- 10%
+    R2.package = "0402"
+
+    # MPP_SET filter resistor
+    R3 = new Resistor
+    R3.resistance = 1kohm +/- 10%
+    R3.package = "0402"
+
+    # Current sense filter resistors
+    Rf1 = new Resistor
+    Rf1.resistance = 1kohm +/- 10%
+    Rf1.package = "0402"
+    Rf2 = new Resistor
+    Rf2.resistance = 1kohm +/- 10%
+    Rf2.package = "0402"
+
+    # Current sense resistor (sets max charge current)
+    Rs = new Resistor
+    Rs.resistance = 10mohm +/- 5%
+    Rs.package = "R1206"
+
+    # Input capacitor
+    Cin = new Capacitor
+    Cin.capacitance = 10uF +/- 20%
+    Cin.package = "0603"
+
+    # Output capacitors
+    Cout1 = new Capacitor
+    Cout1.capacitance = 4.7uF +/- 20%
+    Cout1.package = "0603"
+    Cout2 = new Capacitor
+    Cout2.capacitance = 10uF +/- 20%
+    Cout2.package = "0603"
+
+    # Filter capacitors
+    Cinsns = new Capacitor
+    Cinsns.capacitance = 100nF +/- 20%
+    Cinsns.package = "0402"
+    Coutsns = new Capacitor
+    Coutsns.capacitance = 1nF +/- 20%
+    Coutsns.package = "0402"
+    Cf = new Capacitor
+    Cf.capacitance = 1uF +/- 20%
+    Cf.package = "0402"
+
+    # Power inductor
+    SW_L = new Inductor
+    SW_L.lcsc_id = "C5329540"
+
+    # ESD protection array
+    Dout = new TECH_PUBLIC_SRV05_4_P_T7_package
+
+    # IC ground
+    ic.GND ~ power.lv
+
+    # Input filter: Cin from Vpvr to GND
+    Vpvr.hv ~> Cin ~> power.lv
+
+    # MPP_SET voltage divider and filter
+    Vpvr.hv ~> R3 ~> ic.MPP_SET
+    ic.MPP_SET ~> Cinsns ~> power.lv
+
+    # XSHUT tied to MPP_SET for autonomous startup from solar
+    XSHUT = new ElectricLogic
+    XSHUT.line ~ ic.XSHUT
+    ic.XSHUT ~ ic.MPP_SET
+
+    # Boost inductor: Vpvr -> L -> LX (switch node)
+    Vpvr.hv ~> SW_L ~> ic.LX
+
+    # Output voltage sense filter
+    ic.VCTRL ~> Coutsns ~> power.lv
+
+    # Current sense resistor at output
+    ic.VOUT ~ Rs.unnamed[0]
+
+    # ESD protection on output
+    ic.VOUT ~ Dout.6
+    ic.VOUT ~ Dout.5
+    ic.VOUT ~ Dout.4
+    power.lv ~ Dout.3
+    power.lv ~ Dout.2
+    power.lv ~ Dout.1
+
+    # Output capacitor
+    ic.VOUT ~ Cout1.unnamed[0]
+    Cout1.unnamed[1] ~ power.lv
+
+    # Current sense filter network
+    ic.ICTRL_PLUS ~ Cf.unnamed[0]
+    ic.ICTRL_PLUS ~ Rf1.unnamed[0]
+    Rf1.unnamed[1] ~ Rs.unnamed[0]
+    ic.ICTRL_MINUS ~ Cf.unnamed[1]
+    ic.ICTRL_MINUS ~ Rf2.unnamed[0]
+    Rf2.unnamed[1] ~ Rs.unnamed[1]
+
+    # Output voltage divider (sets Vout = 4.2V)
+    Rs.unnamed[1] ~ R1.unnamed[0]
+    R1.unnamed[1] ~ ic.VCTRL
+    R1.unnamed[1] ~ R2.unnamed[0]
+    R2.unnamed[1] ~ power.lv
+
+    # Battery connection with output cap
+    Rs.unnamed[1] ~ Vbat.hv
+    Vbat.hv ~ Cout2.unnamed[0]
+    Vbat.lv ~ Cout2.unnamed[1]
+
+    # Battery protection circuit (XB3306D)
+    bpc = new XySemi_XB3306D_package
+    C_bpc = new Capacitor
+    C_bpc.capacitance = 100nF +/- 20%
+    C_bpc.package = "0402"
+    bpc.VDD ~> C_bpc ~> bpc.GND
+    bpc.GND ~ Vbatr.lv
+    R_bpc = new Resistor
+    R_bpc.resistance = 100ohm +/- 10%
+    R_bpc.package = "0402"
+    bpc.VDD ~ R_bpc.unnamed[0]
+    R_bpc.unnamed[1] ~ Vbatr.hv
+    Vbat.hv ~ Vbatr.hv
+    bpc.VM ~ Vbat.lv
+
+    # Load output with PTC fuse and reverse polarity diode
+    Load_D = new Diode
+    Load_D.lcsc_id = "C2943878"
+    ptc = new Littelfuse_0603L150SLYR_package
+    Vload_Conn.1 ~ ptc.2
+    ptc.1 ~ Vbat.hv
+    Vload_Conn.2 ~> Load_D ~> Vbatr.lv
+
+    # Net names for debugging
+    Vpv.hv.override_net_name = "Vpv"
+    Vbat.hv.override_net_name = "Vbat"

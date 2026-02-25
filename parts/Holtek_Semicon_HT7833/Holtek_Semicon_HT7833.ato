@@ -1,0 +1,22 @@
+#pragma experiment("TRAITS")
+import has_datasheet
+import has_designator_prefix
+import has_part_picked
+import is_atomic_part
+import is_auto_generated
+
+component Holtek_Semicon_HT7833_package:
+    # This trait marks this file as auto-generated
+    # If you want to manually change it, remove the trait
+    trait is_auto_generated<system="ato_part", source="easyeda:C164106", date="2026-02-25T08:36:21.878219+00:00", checksum="5e97a5f63c743498de4f72ad6f9bc521ce74ca77738d96c76fffcbc6624233c2">
+
+    trait is_atomic_part<manufacturer="Holtek Semicon", partnumber="HT7833", footprint="SOT-23-5_L3.0-W1.7-P0.95-LS2.8-BR.kicad_mod", symbol="HT7833_C164106.kicad_sym", model="SOT-23-5_L2.9-W1.6-H1.1-LS2.8-P0.95.step">
+    trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C164106", manufacturer="Holtek Semicon", partno="HT7833">
+    trait has_designator_prefix<prefix="U">
+    trait has_datasheet<datasheet="https://www.lcsc.com/datasheet/lcsc_datasheet_2404031722_Holtek-Semicon-HT7833_C164106.pdf">
+
+    # pins
+    signal CE ~ pin 3
+    signal GND ~ pin 2
+    signal VIN ~ pin 1
+    signal VOUT ~ pin 5

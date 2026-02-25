@@ -1,0 +1,125 @@
+(footprint "Coilcraft_XAL6060_103MEC:IND-SMD_L6.6-W6.4"
+	(version 20241229)
+	(generator "faebryk_convert")
+	(generator_version "v5")
+	(layer "F.Cu")
+	(tedit "5DC5F6A4")
+	(uuid "2e3fddba-a362-41b2-8de8-a9540b534f6a")
+	(property "Reference" "REF**"
+		(at 0 -4)
+		(layer "F.SilkS")
+		(uuid "8e4daaeb-6098-4d54-a887-596f42d7892b")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "IND-SMD_L6.6-W6.4"
+		(at 0 4)
+		(layer "F.Fab")
+		(uuid "97384339-491f-4a19-9754-8244a46784f1")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_circle
+		(center -3.3 3.2)
+		(end -3.27 3.2)
+		(stroke
+			(width 0.06)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(locked no)
+		(uuid "5aa219e9-2594-4af5-9e8c-88c9904958d2")
+	)
+	(fp_line
+		(start -3.3 -3.2)
+		(end 3.3 -3.2)
+		(stroke
+			(width 0.25)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "12fde500-8420-498c-987e-ea4918830fb4")
+	)
+	(fp_line
+		(start 3.3 -3.2)
+		(end 3.3 3.2)
+		(stroke
+			(width 0.25)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "5f70acf0-38e4-4404-ac6e-702797a11443")
+	)
+	(fp_line
+		(start 3.3 3.2)
+		(end -3.3 3.2)
+		(stroke
+			(width 0.25)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "d7807cee-8b0f-4e06-bb53-42da1af3522f")
+	)
+	(fp_line
+		(start -3.3 3.2)
+		(end -3.3 -3.2)
+		(stroke
+			(width 0.25)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "69dd88ed-934d-48c1-a017-198c863704f9")
+	)
+	(fp_text user "%R"
+		(at 0 0)
+		(layer "F.Fab")
+		(uuid "412ab92c-5b6a-4250-99ad-4f74434bd238")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "2" smd rect
+		(at 2.02 0 0)
+		(size 1.55 5.6)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "502c01aa-7f2d-453b-a48a-e3ff584666ac")
+	)
+	(pad "1" smd rect
+		(at -2.02 0 0)
+		(size 1.55 5.6)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "8aefb0c1-e0fd-40f9-8259-08f66c4ce842")
+	)
+	(model "${KIPRJMOD}/../../parts/Coilcraft_XAL6060_103MEC/IND-SMD_L6.6-W6.4-H2.9.step"
+		(offset
+			(xyz 0 0 -0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+	(embedded_fonts no)
+)

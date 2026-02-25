@@ -1,0 +1,137 @@
+(footprint "GOODWORK_B5819W:SOD-123F_L2.7-W1.6-LS3.8-RD-1"
+	(version 20241229)
+	(generator "faebryk_convert")
+	(generator_version "v5")
+	(layer "F.Cu")
+	(tedit "5DC5F6A4")
+	(uuid "760bb6c0-7468-415f-86d1-559438974342")
+	(property "Reference" "REF**"
+		(at 0 -4)
+		(layer "F.SilkS")
+		(uuid "9d3e247c-5719-49c7-9c38-8994ebb95e66")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SOD-123F_L2.7-W1.6-LS3.8-RD-1"
+		(at 0 4)
+		(layer "F.Fab")
+		(uuid "aa46bf93-da61-409a-8843-9a6443a8e5e3")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_circle
+		(center -1.87 0.8)
+		(end -1.84 0.8)
+		(stroke
+			(width 0.06)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(locked no)
+		(uuid "3fdb5538-dce9-480b-8072-d6b034e98495")
+	)
+	(fp_line
+		(start -1.38 0.92)
+		(end 1.38 0.92)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "8880d533-f493-4b57-b717-c822d2e2f80d")
+	)
+	(fp_line
+		(start 1.38 -0.93)
+		(end 1.38 -0.74)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "7c456ae2-1d9b-4f9b-9c33-440760934140")
+	)
+	(fp_line
+		(start 1.38 0.92)
+		(end 1.38 0.73)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "105be1e2-2af6-452e-921c-bd09a852b904")
+	)
+	(fp_line
+		(start -0.92 -0.88)
+		(end -0.92 0.87)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "2c617953-c08c-4abe-90a6-491e7cb650c9")
+	)
+	(fp_line
+		(start -1.38 -0.93)
+		(end 1.38 -0.93)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(layers "F.SilkS")
+		(locked no)
+		(uuid "26a9d149-0b07-403d-8760-58bf8f6bcf2f")
+	)
+	(fp_text user "%R"
+		(at 0 0)
+		(layer "F.Fab")
+		(uuid "6fc00d5c-4e15-4f47-89ff-148328bf05ba")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd rect
+		(at -1.73 0 0)
+		(size 1.1 1)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "91888ec6-cd70-4600-93b5-a01913966167")
+	)
+	(pad "2" smd rect
+		(at 1.73 0 0)
+		(size 1.1 1)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(uuid "43036936-9673-4d6f-9176-d13feaa4f684")
+	)
+	(model "${KIPRJMOD}/../../parts/GOODWORK_B5819W/SOD-123F_L2.7-W1.6-LS3.8-RD-1.STEP"
+		(offset
+			(xyz 0 0 -0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+	(embedded_fonts no)
+)
