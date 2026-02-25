@@ -101,6 +101,18 @@ venv.bak/
 .aider*
 CLAUDE.md
 
+# Tools
+freerouting*.jar
+place_and_route.py
+KiCadRoutingTools/
+
+# Specctra routing files
+*.dsn
+*.ses
+
+# KiCad intermediate/routed files
+*_routed.kicad_pcb
+
 # Misc
 .DS_Store
 .ato/
