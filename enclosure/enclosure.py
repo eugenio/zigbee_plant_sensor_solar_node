@@ -52,9 +52,9 @@ gland_dia = 5.5     # M5 cable gland hole
 gland_positions_x = [15, 30, 45]  # X positions on PCB
 
 # Battery
-batt_w = 48
-batt_l = 30
-batt_t = 8
+batt_w = 50         # 1000mAh LiPo (LP503449)
+batt_l = 34
+batt_t = 5.5
 
 # Lid
 lid_overlap = 4     # lid plug depth into base
@@ -78,6 +78,9 @@ hinge_dia = 5
 hinge_pin_dia = 3.2
 hinge_spacing = 50
 hinge_boss_h = 8
+
+# Ball joint sockets (X+ wall)
+socket_margin = 12       # distance from Y wall edges
 
 # === DERIVED DIMENSIONS ===
 cavity_w = pcb_w + 2 * pcb_clearance
@@ -137,6 +140,17 @@ def make_base():
             Circle(gland_dia / 2)
         extrude(amount=wall + 0.2, mode=Mode.SUBTRACT)
 
+        # Cable gland hole M5 (X+ wall, between Qwiic connectors) - Soil sensor
+        soil_cy = -outer_l / 2 + pcb_oy + (qwiic1_y + qwiic2_y) / 2
+        soil_cz = wall + base_h / 2 + 3
+        soil_plane = Plane(
+            origin=(outer_w / 2 - wall - 0.1, soil_cy, soil_cz),
+            z_dir=(1, 0, 0)
+        )
+        with BuildSketch(soil_plane):
+            Circle(gland_dia / 2)
+        extrude(amount=wall + 0.2, mode=Mode.SUBTRACT)
+
         # Antenna thin wall (Y-min wall)
         ant_cx = -outer_w / 2 + pcb_ox + antenna_center_x
         with BuildSketch(Plane.XZ.offset(-outer_l / 2 + antenna_wall_t)):
@@ -144,15 +158,25 @@ def make_base():
                 Rectangle(antenna_keepout_w, base_h - pcb_oz + 4)
         extrude(amount=wall - antenna_wall_t + 0.1, mode=Mode.SUBTRACT)
 
-        # Battery retainer walls
+        # Battery retainer walls with snap clips
         batt_cx = -outer_w / 2 + pcb_ox + pcb_w / 2
         batt_cy = -outer_l / 2 + pcb_oy + pcb_l / 2
+        clip_wall = 1.5
+        clip_lip = 1.0      # overhang lip to hold battery down
+        clip_gap = 0.3      # clearance around battery
         for side in [-1, 1]:
-            rx = batt_cx + side * (batt_w / 2 + 0.75)
+            rx = batt_cx + side * (batt_w / 2 + clip_gap + clip_wall / 2)
+            # Vertical wall
             with BuildSketch(Plane.XY.offset(wall)):
                 with Locations([(rx, batt_cy)]):
-                    Rectangle(1.5, batt_l)
+                    Rectangle(clip_wall, batt_l)
             extrude(amount=batt_t + 1)
+            # Snap lip overhanging battery top
+            lip_x = rx - side * (clip_wall / 2 + clip_lip / 2)
+            with BuildSketch(Plane.XY.offset(wall + batt_t)):
+                with Locations([(lip_x, batt_cy)]):
+                    Rectangle(clip_lip, batt_l * 0.4)
+            extrude(amount=1)
 
     return base.part
 

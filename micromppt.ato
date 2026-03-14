@@ -10,13 +10,11 @@ import ElectricLogic
 import Inductor
 import Capacitor
 import Resistor
-import Diode
-import Fuse
+
 from "parts/STMicroelectronics_SPV1040T/STMicroelectronics_SPV1040T.ato" import STMicroelectronics_SPV1040T_package
 from "parts/JST_Sales_America_B2B_PH_K_S_LF__SN/JST_Sales_America_B2B_PH_K_S_LF__SN.ato" import JST_Sales_America_B2B_PH_K_S_LF__SN_package
 from "parts/XySemi_XB3306D/XySemi_XB3306D.ato" import XySemi_XB3306D_package
 from "parts/TECH_PUBLIC_SRV05_4_P_T7/TECH_PUBLIC_SRV05_4_P_T7.ato" import TECH_PUBLIC_SRV05_4_P_T7_package
-from "parts/Littelfuse_0603L150SLYR/Littelfuse_0603L150SLYR.ato" import Littelfuse_0603L150SLYR_package
 
 module Micromppt:
     """5W autonomous MPPT boost solar battery charger (SPV1040T)."""
@@ -32,7 +30,6 @@ module Micromppt:
     # JST PH 2-pin connectors for solar and battery
     Vpv_Conn = new JST_Sales_America_B2B_PH_K_S_LF__SN_package
     Vbat_Conn = new JST_Sales_America_B2B_PH_K_S_LF__SN_package
-    Vload_Conn = new JST_Sales_America_B2B_PH_K_S_LF__SN_package
 
     # Solar panel connector wiring
     Vpv.hv ~ Vpv_Conn.1
@@ -178,14 +175,6 @@ module Micromppt:
     R_bpc.unnamed[1] ~ Vbatr.hv
     Vbat.hv ~ Vbatr.hv
     bpc.VM ~ Vbat.lv
-
-    # Load output with PTC fuse and reverse polarity diode
-    Load_D = new Diode
-    Load_D.lcsc_id = "C2943878"
-    ptc = new Littelfuse_0603L150SLYR_package
-    Vload_Conn.1 ~ ptc.2
-    ptc.1 ~ Vbat.hv
-    Vload_Conn.2 ~> Load_D ~> Vbatr.lv
 
     # Net names for debugging
     Vpv.hv.override_net_name = "Vpv"

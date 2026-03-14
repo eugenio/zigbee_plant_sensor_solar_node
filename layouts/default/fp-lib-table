@@ -238,4 +238,11 @@
 		(options "")
 		(descr "atopile: part lib: UNI_ROYAL_0402WGF5101TCE")
 	)
+	(lib
+		(name "MountingHole_3_2_M3")
+		(type "KiCad")
+		(uri "${KIPRJMOD}/../../.ato/modules/atopile/mounting-holes/parts/MountingHole_3_2_M3")
+		(options "")
+		(descr "atopile: part lib: MountingHole_3_2_M3")
+	)
 )

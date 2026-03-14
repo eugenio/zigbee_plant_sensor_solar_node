@@ -19,6 +19,7 @@ from "atopile/sensirion-sht40/sensirion-sht40.ato" import Sensirion_SHT40
 from "atopile/vishay-veml7700/vishay-veml7700.ato" import Vishay_VEML7700
 from "atopile/maxim-max17048/maxim-max17048.ato" import Maxim_MAX17048
 from "sparkfun-qwiic/sparkfun-qwiic.ato" import QwiicVertical
+from "atopile/mounting-holes/mounting-holes.ato" import MountingHole_3_2_M3
 
 module App:
     """Solar-powered Zigbee plant sensor node."""
@@ -76,3 +77,6 @@ module App:
     qwiic_ec = new QwiicVertical
     power_3v3 ~ qwiic_ec.power
     i2c_bus ~ qwiic_ec.i2c
+
+    # --- Mounting Holes (M3, 4 corners) ---
+    mh = new MountingHole_3_2_M3[4]

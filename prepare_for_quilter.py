@@ -11,10 +11,13 @@ to the right of the board outline.
 
 Usage:
     python prepare_for_quilter.py [--board-width W] [--board-height H] [--move-all]
+                                  [--layers N] [--output-dir DIR]
 
-    Without args: keeps original 60x48mm outline, connectors stay fixed.
+    Without args: keeps original 60x48mm outline, connectors stay fixed, 4-layer.
     With --board-width/--board-height: resizes to WxH mm.
     With --move-all: moves ALL components outside (let Quilter place everything).
+    With --layers: set copper layer count (2, 4, or 6).
+    With --output-dir: override output directory name.
 """
 
 import re
@@ -25,18 +28,22 @@ from pathlib import Path
 # --- Configuration ---
 
 PROJECT_DIR = Path(__file__).parent / "layouts" / "default"
-OUTPUT_DIR = Path(__file__).parent / "quilter_upload"
+DEFAULT_OUTPUT_DIR = Path(__file__).parent / "quilter_upload"
 
 # Components that must stay at their current position (edge-mounted connectors, buttons)
 FIXED_REFS = {
-    "USBC1",  # USB-C connector (board edge)
-    "CN1",    # JST PH battery connector
-    "CN2",    # JST PH solar panel connector
-    "CN3",    # JST PH connector
-    "CN4",    # Qwiic connector (soil)
-    "CN5",    # Qwiic connector (EC)
-    "SW1",    # Boot button (user-accessible)
-    "SW2",    # Reset button (user-accessible)
+    "USBC1",  # USB-C connector (left edge)
+    "CN1",    # JST PH battery (bottom edge)
+    "CN3",    # JST PH solar panel (bottom edge)
+    "CN4",    # Qwiic connector - soil (right edge)
+    "CN5",    # Qwiic connector - EC (right edge)
+    "SW1",    # Boot button (left edge)
+    "SW2",    # Reset button (left edge)
+    "U5",     # ESP32-C6 (antenna overhangs top edge)
+    "H1",     # Mounting hole top-left
+    "H2",     # Mounting hole top-right
+    "H3",     # Mounting hole bottom-left
+    "H4",     # Mounting hole bottom-right
 }
 
 # Original board outline coordinates
@@ -56,6 +63,10 @@ def parse_args():
                         help="Target board height in mm (default: keep original 48mm)")
     parser.add_argument("--move-all", action="store_true",
                         help="Move ALL components outside (let Quilter place everything)")
+    parser.add_argument("--layers", type=int, default=4, choices=[2, 4, 6],
+                        help="Number of copper layers (default: 4)")
+    parser.add_argument("--output-dir", type=str, default=None,
+                        help="Output directory (default: quilter_upload)")
     return parser.parse_args()
 
 
@@ -247,64 +258,91 @@ def update_board_outline(content: str, new_width: float, new_height: float,
     return content
 
 
-def update_stackup_4layer(content: str) -> str:
-    """Ensure stackup is proper 4-layer with inner copper layers."""
-    # Check if In1.Cu and In2.Cu dielectric layers exist
-    if "In1.Cu" in content and '"In2.Cu"' in content:
-        # Already has inner layers in stackup definition, check if stackup
-        # has proper dielectric layers between them
-        pass
-
-    # The layer definitions at the top already include In1.Cu and In2.Cu
-    # Make sure the stackup section has proper 4-layer structure
-    old_stackup_core = (
-        '\t\t\t(layer "dielectric 1"\n'
-        '\t\t\t\t(type "core")\n'
-        '\t\t\t\t(thickness 1.51)\n'
+def _make_dielectric(name: str, dtype: str, thickness: float) -> str:
+    return (
+        f'\t\t\t(layer "{name}"\n'
+        f'\t\t\t\t(type "{dtype}")\n'
+        f'\t\t\t\t(thickness {thickness})\n'
         '\t\t\t\t(material "FR4")\n'
         '\t\t\t\t(epsilon_r 4.5)\n'
         '\t\t\t\t(loss_tangent 0.02)\n'
         '\t\t\t)'
     )
 
-    new_stackup_4layer = (
-        '\t\t\t(layer "dielectric 1"\n'
-        '\t\t\t\t(type "prepreg")\n'
-        '\t\t\t\t(thickness 0.2)\n'
-        '\t\t\t\t(material "FR4")\n'
-        '\t\t\t\t(epsilon_r 4.5)\n'
-        '\t\t\t\t(loss_tangent 0.02)\n'
-        '\t\t\t)\n'
-        '\t\t\t(layer "In1.Cu"\n'
+
+def _make_copper(name: str, thickness: float = 0.035) -> str:
+    return (
+        f'\t\t\t(layer "{name}"\n'
         '\t\t\t\t(type "copper")\n'
-        '\t\t\t\t(thickness 0.035)\n'
-        '\t\t\t)\n'
-        '\t\t\t(layer "dielectric 2"\n'
-        '\t\t\t\t(type "core")\n'
-        '\t\t\t\t(thickness 1.065)\n'
-        '\t\t\t\t(material "FR4")\n'
-        '\t\t\t\t(epsilon_r 4.5)\n'
-        '\t\t\t\t(loss_tangent 0.02)\n'
-        '\t\t\t)\n'
-        '\t\t\t(layer "In2.Cu"\n'
-        '\t\t\t\t(type "copper")\n'
-        '\t\t\t\t(thickness 0.035)\n'
-        '\t\t\t)\n'
-        '\t\t\t(layer "dielectric 3"\n'
-        '\t\t\t\t(type "prepreg")\n'
-        '\t\t\t\t(thickness 0.2)\n'
-        '\t\t\t\t(material "FR4")\n'
-        '\t\t\t\t(epsilon_r 4.5)\n'
-        '\t\t\t\t(loss_tangent 0.02)\n'
+        f'\t\t\t\t(thickness {thickness})\n'
         '\t\t\t)'
     )
 
-    if old_stackup_core in content:
-        content = content.replace(old_stackup_core, new_stackup_4layer)
-        print("  Updated stackup to proper 4-layer (prepreg/core/prepreg)")
+
+def _build_stackup_layers(num_layers: int) -> str:
+    """Build the inner stackup layers (between F.Cu and B.Cu)."""
+    if num_layers == 2:
+        return _make_dielectric("dielectric 1", "core", 1.51)
+    elif num_layers == 4:
+        # F.Cu / prepreg / In1.Cu / core / In2.Cu / prepreg / B.Cu
+        return "\n".join([
+            _make_dielectric("dielectric 1", "prepreg", 0.2),
+            _make_copper("In1.Cu"),
+            _make_dielectric("dielectric 2", "core", 1.065),
+            _make_copper("In2.Cu"),
+            _make_dielectric("dielectric 3", "prepreg", 0.2),
+        ])
+    elif num_layers == 6:
+        # F.Cu / prepreg / In1.Cu / prepreg / In2.Cu / core / In3.Cu / prepreg / In4.Cu / prepreg / B.Cu
+        return "\n".join([
+            _make_dielectric("dielectric 1", "prepreg", 0.13),
+            _make_copper("In1.Cu"),
+            _make_dielectric("dielectric 2", "prepreg", 0.13),
+            _make_copper("In2.Cu"),
+            _make_dielectric("dielectric 3", "core", 0.8),
+            _make_copper("In3.Cu"),
+            _make_dielectric("dielectric 4", "prepreg", 0.13),
+            _make_copper("In4.Cu"),
+            _make_dielectric("dielectric 5", "prepreg", 0.13),
+        ])
     else:
-        print("  Stackup already modified or not matching expected pattern")
+        raise ValueError(f"Unsupported layer count: {num_layers}")
 
+
+def update_stackup(content: str, num_layers: int) -> str:
+    """Replace the stackup between F.Cu and B.Cu with the correct layer count."""
+    # Match everything between F.Cu copper layer and B.Cu copper layer in stackup
+    pattern = re.compile(
+        r'(\t\t\t\(layer "F\.Cu"\n\t\t\t\t\(type "copper"\)\n\t\t\t\t\(thickness [\d.]+\)\n\t\t\t\)\n)'
+        r'(.*?)'
+        r'(\t\t\t\(layer "B\.Cu")',
+        re.DOTALL,
+    )
+    m = pattern.search(content)
+    if not m:
+        print("  WARNING: Could not find F.Cu/B.Cu stackup markers")
+        return content
+
+    new_inner = _build_stackup_layers(num_layers)
+    content = content[:m.end(1)] + new_inner + "\n" + content[m.start(3):]
+
+    # Update the layer table at the top to include/exclude inner layers
+    # First remove any existing inner layer definitions
+    content = re.sub(r'\n\t\t\(\d+ "In\d+\.Cu" signal\)', '', content)
+
+    # Add inner layer definitions after B.Cu line in layer table
+    if num_layers >= 4:
+        inner_layer_defs = ""
+        layer_numbers = {4: [(4, "In1.Cu"), (6, "In2.Cu")],
+                         6: [(2, "In1.Cu"), (4, "In2.Cu"), (6, "In3.Cu"), (8, "In4.Cu")]}
+        for num, name in layer_numbers[num_layers]:
+            inner_layer_defs += f'\n\t\t({num} "{name}" signal)'
+
+        # Insert after F.Cu line
+        fcu_pattern = r'(\t\t\(0 "F\.Cu" signal\))'
+        content = re.sub(fcu_pattern, r'\1' + inner_layer_defs, content)
+
+    print(f"  Updated stackup to {num_layers}-layer")
     return content
 
 
@@ -313,9 +351,12 @@ def main():
 
     board_width = args.board_width or ORIG_WIDTH
     board_height = args.board_height or ORIG_HEIGHT
+    num_layers = args.layers
+    OUTPUT_DIR = Path(__file__).parent / args.output_dir if args.output_dir else DEFAULT_OUTPUT_DIR
 
     print(f"=== Quilter Upload Preparation ===")
     print(f"Target board size: {board_width} x {board_height} mm")
+    print(f"Copper layers: {num_layers}")
     print()
 
     # Create output directory
@@ -353,9 +394,9 @@ def main():
     content = remove_filled_zones(content)
     print(f"  Removed {before - len(content)} chars of zone data")
 
-    # Step 3: Update stackup to proper 4-layer
-    print("Step 3: Updating stackup for 4-layer board...")
-    content = update_stackup_4layer(content)
+    # Step 3: Update stackup
+    print(f"Step 3: Updating stackup for {num_layers}-layer board...")
+    content = update_stackup(content, num_layers)
 
     # Step 4: Update board outline if resizing
     if args.board_width or args.board_height:

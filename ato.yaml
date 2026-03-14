@@ -18,3 +18,6 @@ dependencies:
 - type: registry
   identifier: atopile/batteries
   release: 0.2.3
+- type: registry
+  identifier: atopile/mounting-holes
+  release: 0.2.0
