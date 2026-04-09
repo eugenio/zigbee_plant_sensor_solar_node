@@ -92,7 +92,10 @@ venv.bak/
 .idea/
 .cursor/
 .windsurf/
-.claude/
+# .claude/ — track skills, agents, commands; exclude secrets
+.claude/mcp.json
+.claude/settings.local.json
+.claude/credentials.json
 .mcp.json
 .github/instructions/
 .spyderproject
@@ -112,6 +115,10 @@ KiCadRoutingTools/
 
 # KiCad intermediate/routed files
 *_routed.kicad_pcb
+
+# EDA caches
+.cache/jlc/
+libraries/
 
 # Misc
 .DS_Store
@@ -212,3 +219,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+# pixi environments
+.pixi/*
+!.pixi/config.toml

@@ -15,10 +15,12 @@ import Resistor
 from "xiao_esp32c6.ato" import ESP32_C6_MINI_1
 from "micromppt.ato" import Micromppt
 from "ldo.ato" import HT7833_LDO
-from "atopile/sensirion-sht40/sensirion-sht40.ato" import Sensirion_SHT40
-from "atopile/vishay-veml7700/vishay-veml7700.ato" import Vishay_VEML7700
-from "atopile/maxim-max17048/maxim-max17048.ato" import Maxim_MAX17048
+from "loadswitch.ato" import HighSideSwitch
+from "parts/sensirion-sht40/sensirion-sht40.ato" import Sensirion_SHT40
+from "parts/vishay-veml7700/vishay-veml7700.ato" import Vishay_VEML7700
+from "parts/maxim-max17048/maxim-max17048.ato" import Maxim_MAX17048
 from "sparkfun-qwiic/sparkfun-qwiic.ato" import QwiicVertical
+from "ntc_adc.ato" import NTC_ADC
 from "atopile/mounting-holes/mounting-holes.ato" import MountingHole_3_2_M3
 
 module App:
@@ -29,6 +31,8 @@ module App:
     power_bat.voltage = 3.0V to 4.2V
     power_3v3 = new ElectricPower
     power_3v3.voltage = 3.3V +/- 3%
+    # Switched sensor rail (GPIO-gated)
+    power_sensor = new ElectricPower
 
     # --- Solar MPPT Charger ---
     mppt = new Micromppt
@@ -36,47 +40,96 @@ module App:
     # Battery rail from MPPT output
     mppt.Vbat ~ power_bat
 
+    # --- MPPT Power Gate (H4: cut SPV1040T quiescent at night) ---
+    # GPIO0 controls P-FET: LOW=charger ON, HIGH/tristate=charger OFF
+    # Saves 60uA during nighttime sleep (73% of sleep budget)
+    mppt_gate = new HighSideSwitch
+    power_bat ~ mppt_gate.power_in
+    mppt_gate.power_out ~ mppt.power
+
     # --- 3.3V LDO (battery -> 3.3V) ---
     ldo = new HT7833_LDO
     power_bat ~ ldo.power_in
     ldo.power_out ~ power_3v3
 
+    # --- Sensor Power Gate (M1: cut sensor power during sleep) ---
+    # GPIO1 controls P-FET: LOW=sensors ON, HIGH/tristate=sensors OFF
+    # Saves 1-10mA from external Qwiic modules during sleep
+    sensor_gate = new HighSideSwitch
+    power_3v3 ~ sensor_gate.power_in
+    sensor_gate.power_out ~ power_sensor
+
     # --- MCU ---
     mcu = new ESP32_C6_MINI_1
     power_3v3 ~ mcu.power
+
+    # --- GPIO Assignments ---
+    # GPIO0: MPPT charger power gate (active low)
+    mcu.gpio0 ~ mppt_gate.enable
+    # GPIO1: Sensor rail power gate (active low)
+    mcu.gpio1 ~ sensor_gate.enable
+    # GPIO2: MAX17048 battery alert (active low interrupt for UVLO)
+    # Wired below after fuel_gauge instantiation
 
     # --- I2C Bus ---
     i2c_bus = new I2C
     mcu.i2c ~ i2c_bus
 
-    # --- Sensors ---
+    # Central I2C pull-ups (single pair for entire bus)
+    # 2.2k suits 400kHz with 3+ devices + Qwiic cables (~120pF total)
+    r_sda_pu = new Resistor
+    r_sda_pu.resistance = 2.2kohm +/- 1%
+    r_sda_pu.package = "0402"
+    r_scl_pu = new Resistor
+    r_scl_pu.resistance = 2.2kohm +/- 1%
+    r_scl_pu.package = "0402"
+    power_3v3.hv ~> r_sda_pu ~> i2c_bus.sda.line
+    power_3v3.hv ~> r_scl_pu ~> i2c_bus.scl.line
+
+    # --- Sensors (on switched power rail) ---
 
     # Temperature & Humidity (SHT40, I2C addr 0x44)
     sht40 = new Sensirion_SHT40
-    power_3v3 ~ sht40.power
+    power_sensor ~ sht40.power
     i2c_bus ~ sht40.i2c
 
     # Ambient Light (VEML7700, I2C addr 0x10)
     veml7700 = new Vishay_VEML7700
-    power_3v3 ~ veml7700.power
+    power_sensor ~ veml7700.power
     i2c_bus ~ veml7700.i2c
 
+    # --- Always-on peripherals (on main 3.3V rail) ---
+
     # Battery Fuel Gauge (MAX17048, I2C addr 0x36)
+    # Stays on main 3.3V rail — needed for UVLO monitoring during sleep
     fuel_gauge = new Maxim_MAX17048
     power_3v3 ~ fuel_gauge.power
     power_bat ~ fuel_gauge.battery_interface
     i2c_bus ~ fuel_gauge.i2c
 
-    # --- Qwiic Connectors for external sensors ---
+    # H5: Wire MAX17048 ALERT to GPIO2 for battery UVLO wake
+    # Firmware configures alert threshold at ~3.2V (20% SOC)
+    # On alert, MCU wakes from deep sleep and enters low-power shutdown
+    mcu.gpio2 ~ fuel_gauge.alert
+
+    # --- Qwiic Connectors (on switched sensor power rail) ---
     # Qwiic 1: Soil moisture sensor (external I2C module)
     qwiic_soil = new QwiicVertical
-    power_3v3 ~ qwiic_soil.power
+    power_sensor ~ qwiic_soil.power
     i2c_bus ~ qwiic_soil.i2c
 
     # Qwiic 2: EC/Conductivity sensor (external I2C module)
     qwiic_ec = new QwiicVertical
-    power_3v3 ~ qwiic_ec.power
+    power_sensor ~ qwiic_ec.power
     i2c_bus ~ qwiic_ec.i2c
+
+    # --- External NTC Thermistor (precision temperature, always on) ---
+    # ADS1115 16-bit ADC + 10k 0.1% reference + NTC probe via JST PH 2-pin.
+    # On main 3.3V rail (not switched) — temperature monitoring during sleep wake.
+    # I2C addr 0x48 (no conflicts with SHT40=0x44, VEML7700=0x10, MAX17048=0x36).
+    ntc = new NTC_ADC
+    power_3v3 ~ ntc.power
+    i2c_bus ~ ntc.i2c
 
     # --- Mounting Holes (M3, 4 corners) ---
     mh = new MountingHole_3_2_M3[4]

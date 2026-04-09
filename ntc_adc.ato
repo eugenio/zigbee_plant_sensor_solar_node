@@ -1,0 +1,80 @@
+#pragma experiment("BRIDGE_CONNECT")
+
+"""
+External NTC thermistor with ADS1115 16-bit ADC.
+High-precision temperature measurement (-30 to +100 degC, 0.1 degC resolution).
+NTC probe connects via JST PH 2-pin connector; only the metal tip protrudes
+from the enclosure.
+
+Circuit:
+    VDD -- [R_ref 10k 0.1%] --+-- ADS1115 AIN0
+                               |
+                    [CN_ntc] --+-- NTC 10k -- GND
+
+Calibration: use Steinhart-Hart 3-point calibration in firmware
+to achieve +-0.1 degC absolute accuracy from a standard +-1% NTC.
+"""
+
+import ElectricPower
+import I2C
+import Capacitor
+
+from "parts/Texas_Instruments_ADS1115IRUGR/Texas_Instruments_ADS1115IRUGR.ato" import Texas_Instruments_ADS1115IRUGR_package
+from "parts/YAGEO_RT0402BRD0710KL/YAGEO_RT0402BRD0710KL.ato" import YAGEO_RT0402BRD0710KL_package
+from "parts/JST_Sales_America_B2B_PH_K_S_LF__SN/JST_Sales_America_B2B_PH_K_S_LF__SN.ato" import JST_Sales_America_B2B_PH_K_S_LF__SN_package
+
+module NTC_ADC:
+    """ADS1115-based NTC thermistor readout with 0.1 degC resolution."""
+
+    # --- External interfaces ---
+    power = new ElectricPower
+    """3.3V supply (same rail as MCU)."""
+    i2c = new I2C
+    """I2C bus (addr 0x48 with ADDR=GND)."""
+
+    # --- ADS1115 16-bit ADC ---
+    adc = new Texas_Instruments_ADS1115IRUGR_package
+
+    # Power
+    power.hv ~ adc.VDD
+    power.lv ~ adc.GND
+
+    # I2C
+    i2c.scl.line ~ adc.SCL
+    i2c.sda.line ~ adc.SDA
+    i2c.scl.reference ~ power
+    i2c.sda.reference ~ power
+
+    # ADDR -> GND: I2C address 0x48
+    adc.ADDR ~ power.lv
+
+    # ALERT/RDY unused — leave floating (internal pull-up)
+
+    # Unused analog inputs -> GND (reduce noise)
+    adc.AIN1 ~ power.lv
+    adc.AIN2 ~ power.lv
+    adc.AIN3 ~ power.lv
+
+    # --- Decoupling ---
+    c_dec = new Capacitor
+    c_dec.capacitance = 100nF +/- 20%
+    c_dec.package = "0402"
+    power.hv ~> c_dec ~> power.lv
+
+    # --- NTC voltage divider ---
+    # VDD -> R_ref -> AIN0 <- NTC probe <- GND
+    # Ratiometric: ADS1115 measures AIN0 vs GND, R_ref provides upper leg.
+    # With 10k NTC at 25C: V_AIN0 = VDD * 10k/(10k+10k) = VDD/2
+    # ADS1115 PGA at +-4.096V, 16-bit: LSB = 0.125mV -> ~0.02 degC resolution
+
+    # Precision reference resistor (0.1%, 25ppm/C)
+    r_ref = new YAGEO_RT0402BRD0710KL_package
+    power.hv ~ r_ref.p1
+    r_ref.p2 ~ adc.AIN0
+
+    # NTC probe connector (JST PH 2-pin)
+    # Pin 1: NTC signal (to AIN0 / R_ref junction)
+    # Pin 2: GND
+    cn_ntc = new JST_Sales_America_B2B_PH_K_S_LF__SN_package
+    cn_ntc.1 ~ adc.AIN0
+    cn_ntc.2 ~ power.lv

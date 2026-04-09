@@ -94,10 +94,27 @@ Required solar input: 30 mWh / 0.567 = **52.9 mWh/day**
 
 ## Selected Configuration
 
-- **Solar panel**: ~2W, 110x70mm, 5V
+- **Solar panel**: ~2W, **4-cell** (Vmpp ~2.0-2.2V, Impp ~0.9-1.0A)
+  - CRITICAL: SPV1040T is a boost-only converter (Vin < Vout required).
+    A 5V panel (Voc ~6.5V) exceeds Vin_max=5.5V and prevents MPPT tracking.
+    Must use a low-voltage panel where Vmpp < Vbat (4.2V).
+  - Alternative: replace SPV1040T with buck-boost MPPT (e.g., SPV1050, CN3791)
+    if a 5V+ panel is preferred.
 - **Battery**: 1000 mAh LiPo (3.7V nominal)
-- **Battery autonomy**: ~86 days without sun
+- **Battery autonomy**: ~86 days without sun (with MPPT gate: ~120+ days)
 - **Solar sufficiency**: needs <2 minutes of direct sun per day
+
+## Design Improvements (rev 2)
+
+- **R1/R2 tolerance**: Changed from 10% to 1% — prevents overcharge (4.53V risk)
+- **LDO bulk cap**: Added 100µF output cap — absorbs 120mA Zigbee TX transient
+- **I2C pull-ups**: Centralized single 2.2k pair — was 6x10k stacked (3.3k effective)
+- **Solar reverse protection**: Added Schottky diode on Vpv input
+- **USB ESD**: Added SRV05-4 TVS on USB D+/D-
+- **MPPT power gate**: P-FET load switch (SI2301CDS) on GPIO0 — saves 60µA at night
+- **Sensor power gate**: P-FET load switch on GPIO1 — cuts external sensor power during sleep
+- **Battery UVLO**: MAX17048 ALERT wired to GPIO2 — wakes MCU for low-battery shutdown
+- **RF keepout**: Documented 3.5mm antenna clearance zone requirement
 
 ## ESP32-C6 802.15.4 TX Power Levels
 

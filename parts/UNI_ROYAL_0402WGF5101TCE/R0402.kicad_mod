@@ -4,11 +4,11 @@
 	(generator_version "v5")
 	(layer "F.Cu")
 	(tedit "5DC5F6A4")
-	(uuid "8e4a63ad-2d21-4db1-8dee-6bf34f59dfe1")
+	(uuid "eff26322-c9de-49f4-a3f1-9ac616669361")
 	(property "Reference" "REF**"
 		(at 0 -4)
 		(layer "F.SilkS")
-		(uuid "3283116c-90af-4b05-af1f-898f654e1051")
+		(uuid "f19a6010-b040-4465-a5d8-77c176252c6c")
 		(effects
 			(font
 				(size 1 1)
@@ -19,7 +19,7 @@
 	(property "Value" "R0402"
 		(at 0 4)
 		(layer "F.Fab")
-		(uuid "57bdeb9d-5116-40fe-ac9a-1db243b8ac67")
+		(uuid "56647ff6-b7d6-45c9-80dd-1097e27528a5")
 		(effects
 			(font
 				(size 1 1)
@@ -37,7 +37,7 @@
 		)
 		(layer "F.Fab")
 		(locked no)
-		(uuid "35c18048-8be7-4335-978d-ab5ecbfa3845")
+		(uuid "38e49149-54c2-4b84-9c31-4376c6124156")
 	)
 	(fp_line
 		(start -0.23 0.5)
@@ -49,7 +49,7 @@
 		(layer "F.SilkS")
 		(layers "F.SilkS")
 		(locked no)
-		(uuid "60172b78-f68a-4e9f-a64e-257232f7df21")
+		(uuid "1728e7e1-2239-4dad-82ef-43ba00a811d4")
 	)
 	(fp_line
 		(start -0.94 0.5)
@@ -61,7 +61,7 @@
 		(layer "F.SilkS")
 		(layers "F.SilkS")
 		(locked no)
-		(uuid "338534dd-7e83-48e9-a8c8-06396a317940")
+		(uuid "ec189216-3c68-4d57-ae9f-65a7d6de5136")
 	)
 	(fp_line
 		(start -0.94 -0.5)
@@ -73,7 +73,7 @@
 		(layer "F.SilkS")
 		(layers "F.SilkS")
 		(locked no)
-		(uuid "80a6cd41-f8c0-40a4-ad76-329ae7f1df61")
+		(uuid "daea2770-69c1-4ce8-980d-b8b6164e0cfc")
 	)
 	(fp_line
 		(start 0.23 0.5)
@@ -85,7 +85,7 @@
 		(layer "F.SilkS")
 		(layers "F.SilkS")
 		(locked no)
-		(uuid "6dca1668-e92c-4434-8ed2-484d6dc6ab43")
+		(uuid "49493e4d-10f0-4d61-99b4-be923a8081c1")
 	)
 	(fp_line
 		(start 0.94 0.5)
@@ -97,7 +97,7 @@
 		(layer "F.SilkS")
 		(layers "F.SilkS")
 		(locked no)
-		(uuid "06f870f0-0022-4b0a-8bd0-31b96dc251ae")
+		(uuid "831858d3-fc55-4104-9106-884ae6af90ff")
 	)
 	(fp_line
 		(start 0.94 -0.5)
@@ -109,30 +109,19 @@
 		(layer "F.SilkS")
 		(layers "F.SilkS")
 		(locked no)
-		(uuid "4706e459-0e29-4287-86d5-42895810ac80")
-	)
-	(fp_text user "%R"
-		(at 0 0)
-		(layer "F.Fab")
-		(uuid "bf8e39b0-3199-4f16-bd7e-49823de09749")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
+		(uuid "a766d93d-fed6-4f91-8752-af3bdb310f28")
 	)
 	(pad "2" smd rect
 		(at 0.43 0 0)
 		(size 0.57 0.54)
 		(layers "F.Cu" "F.Paste" "F.Mask")
-		(uuid "cf62011a-d3a8-4050-932a-96398d267df0")
+		(uuid "6716728d-42dd-4a36-ab4f-ef85e0282ff1")
 	)
 	(pad "1" smd rect
 		(at -0.43 0 0)
 		(size 0.57 0.54)
 		(layers "F.Cu" "F.Paste" "F.Mask")
-		(uuid "0769918e-6b99-4fa0-89e9-9950d5966629")
+		(uuid "70acc403-50fd-43ec-9582-d432a503e5a9")
 	)
 	(model "${KIPRJMOD}/../../parts/UNI_ROYAL_0402WGF5101TCE/R0402_L1.0-W0.5-H0.4.step"
 		(offset

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "identifier": "atopile/vishay-veml7700",
+  "version": "0.4.0",
+  "source": {
+    "type": "registry",
+    "url": "https://packages.atopileapi.com",
+    "ref": null,
+    "path": null
+  },
+  "installed_at": "2026-04-09T11:50:54.792313",
+  "installed_by": "0.15.3",
+  "file_checksums": {
+    "vishay-veml7700.ato": "f70605fc0edb9690beef8b5ae8b2397fd7017c1555f44995c82c28867f0ba72f",
+    "README.md": "e6d4272ca60d10390e31b16f28cff6b9658e338abec2d5c66bc303867929d4c4",
+    "usage.ato": "7ea718d6883e2a226e4499dfde86d9e1f5d91425f3e8c6af26d1f48914907d62",
+    "ato.yaml": "1edc4e6742fe4e28894a72d9de5feb9646341a3e7bad95122ee9ed5e505c338e",
+    "layouts/usage/fp-lib-table": "19ba7dfabc10e039bdb4774ed219cb10b26f0fa71117c98879a7c165483408ee",
+    "layouts/usage/usage.kicad_pcb": "36c1cfec2dfab9d19efebe70ecc66b24497ca74378da5c54bc35a5ecb9aec9f8",
+    "layouts/usage/usage.kicad_pro": "350ff751cd9c80a109dc874f9bf0f3194e3bfe4f4f2fec36e12629decaba5d0b",
+    "layouts/default/fp-lib-table": "19ba7dfabc10e039bdb4774ed219cb10b26f0fa71117c98879a7c165483408ee",
+    "layouts/default/default.kicad_pro": "9599580ebcef806df8a364b6446519d5731b97c510e28be2f12d34ea829adf89",
+    "layouts/default/default.kicad_pcb": "fe5a3808d5111626714d963281995ff5dcc3e3a41bd1fb0a840819f9e9ff3351",
+    "parts/Vishay_Intertech_VEML7700_TT/SMD-4P_L6.8-W2.35-H3.0-P1.27.kicad_mod": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "parts/Vishay_Intertech_VEML7700_TT/VEML7700-TT.kicad_sym": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "parts/Vishay_Intertech_VEML7700_TT/Vishay_Intertech_VEML7700_TT.ato": "2bebc8ce68e86f336466789687eafb44abd26249dda9a2bec4b4e16d20e90ee2",
+    "parts/Vishay_Intertech_VEML7700_TT/SMD-4P_L6.8-W2.35-H3.0.step": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "parts/VISHAY_VEML7700_TR/VEML7700-TR.kicad_sym": "1b6eab5e84b8b6e4d79451878f3356054a95eaa64f2a16c7a502bfc770d57ec4",
+    "parts/VISHAY_VEML7700_TR/LED-SMD_4P-L6.8-W2.4_VEML7700-TR.kicad_mod": "5c42367eafbc3a13ba983a1189af1d2a5c76b34c032174bf2f61a82a1a50f0cc",
+    "parts/VISHAY_VEML7700_TR/LED-SMD_4P-L6.8-W2.4_VEML7700-TR.STEP": "12841738f0c554d2e76328e85e0cf31da18274c94f7999a12f5117ebdd476bc0",
+    "parts/VISHAY_VEML7700_TR/VISHAY_VEML7700_TR.ato": "40efa9660f439420a6390b4b57606f32236b9e2a225c6caf4c5b2af99bc28c57",
+    "parts/UNI_ROYAL_0402WGF1002TCE/R0402.kicad_mod": "a1af56f72912a4558fec38418650ef28a6b4b063c55061ca8eb83d027248a89f",
+    "parts/UNI_ROYAL_0402WGF1002TCE/R0402_L1.0-W0.5-H0.4.step": "134d58dd68899b29f9e19def208de6690d06010e01c304866fbd4d81c8640aa6",
+    "parts/UNI_ROYAL_0402WGF1002TCE/UNI_ROYAL_0402WGF1002TCE.ato": "d76a8562c1cb110324780ab4108f7de1fabbcf692eef027e821c7eb1d4d85abc",
+    "parts/UNI_ROYAL_0402WGF1002TCE/0402WGF1002TCE.kicad_sym": "81c087f94ceab9f615ba1aa036628532fbae2ff8c6cfc259e8361c72c016ccde",
+    "parts/Samsung_Electro_Mechanics_CL05B104KO5NNNC/C0402.kicad_mod": "5b051191225373ff57489a01a16d4c1821c36876b0fed167379239584a0e64c5",
+    "parts/Samsung_Electro_Mechanics_CL05B104KO5NNNC/CL05B104KO5NNNC.kicad_sym": "206d27623f5c9447f71e0c8adca3f99a0b0bd3e59217f8d5fce4d05b73044636",
+    "parts/Samsung_Electro_Mechanics_CL05B104KO5NNNC/C0402_L1.0-W0.5-H0.5.step": "0ca13e031cb175d8dc5c0393959392c0e3213eb099cc9b61fe4118feffcebad8",
+    "parts/Samsung_Electro_Mechanics_CL05B104KO5NNNC/Samsung_Electro_Mechanics_CL05B104KO5NNNC.ato": "737ad1dc45779be8c57e5157cc92df6a5a7e531c6a0b81f3f7b639d0e0a64b0b"
+  }
+}

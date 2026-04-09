@@ -1,4 +1,3 @@
-#pragma experiment("TRAITS")
 import has_datasheet
 import has_designator_prefix
 import has_part_picked
@@ -8,7 +7,7 @@ import is_auto_generated
 component PSA_FMF06FTHR010_LH_package:
     # This trait marks this file as auto-generated
     # If you want to manually change it, remove the trait
-    trait is_auto_generated<system="ato_part", source="easyeda:C105362", date="2026-02-25T08:11:58.726455+00:00", checksum="bd68b1ba3cdedeeb9dba4a2794370d2045c597d5879faa4d9671964c2d241c04">
+    trait is_auto_generated<system="ato_part", source="easyeda:C105362", date="2026-04-09T09:51:24.591956+00:00", checksum="7c8e0baf9dad1e0e06ca8d499c3b8122f9c7244c6dbe7cd19d047e0823073225">
 
     trait is_atomic_part<manufacturer="PSA", partnumber="FMF06FTHR010-LH", footprint="R1206.kicad_mod", symbol="FMF06FTHR010-LHL.kicad_sym", model="R1206_L3.2-W1.6-H0.6.step">
     trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C105362", manufacturer="PSA", partno="FMF06FTHR010-LH">

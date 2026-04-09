@@ -1,0 +1,19 @@
+#pragma experiment("TRAITS")
+import has_designator_prefix
+import has_part_picked
+import is_atomic_part
+
+component SI2301CDS_package:
+    """SI2301CDS P-channel MOSFET, SOT-23-3.
+    Vds=-20V, Id=-2.8A, Rdson=100mΩ@Vgs=-4.5V, Vgs_th=-0.5V to -1.2V.
+    Suitable for 3.3V GPIO-driven high-side switching.
+    """
+
+    trait is_atomic_part<manufacturer="Vishay Siliconix", partnumber="SI2301CDS-T1-GE3", footprint="SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR.kicad_mod", symbol="SI2301CDS.kicad_sym", model="SOT-23-3P_L2.9-W1.3-H1.0-LS2.4-P0.95.step">
+    trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C10487", manufacturer="Vishay Siliconix", partno="SI2301CDS-T1-GE3">
+    trait has_designator_prefix<prefix="Q">
+
+    # SOT-23 pinout for P-FET: 1=G, 2=S, 3=D
+    signal G ~ pin 1
+    signal S ~ pin 2
+    signal D ~ pin 3

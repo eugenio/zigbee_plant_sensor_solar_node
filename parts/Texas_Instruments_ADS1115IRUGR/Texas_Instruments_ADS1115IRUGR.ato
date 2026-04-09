@@ -1,0 +1,24 @@
+#pragma experiment("TRAITS")
+import has_designator_prefix
+import has_part_picked
+import is_atomic_part
+import is_auto_generated
+
+component Texas_Instruments_ADS1115IRUGR_package:
+    """ADS1115 16-bit delta-sigma ADC, I2C, X2QFN-10 (1.5x2mm)."""
+
+    trait is_atomic_part<manufacturer="Texas Instruments", partnumber="ADS1115IRUGR", footprint="X2QFN-10_L2.0-W1.5-P0.50-BL.kicad_mod", symbol="ADS1115IRUGR.kicad_sym", model="ADS1115IRUGR.step">
+    trait has_part_picked::by_supplier<supplier_id="lcsc", supplier_partno="C2651328", manufacturer="Texas Instruments", partno="ADS1115IRUGR">
+    trait has_designator_prefix<prefix="U">
+
+    # pins
+    signal ADDR ~ pin 1
+    signal ALERT_RDY ~ pin 2
+    signal GND ~ pin 3
+    signal AIN0 ~ pin 4
+    signal AIN1 ~ pin 5
+    signal AIN2 ~ pin 6
+    signal AIN3 ~ pin 7
+    signal VDD ~ pin 8
+    signal SDA ~ pin 9
+    signal SCL ~ pin 10

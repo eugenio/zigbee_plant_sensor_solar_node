@@ -45,3 +45,10 @@ module HT7833_LDO:
     c_out.capacitance = 1uF +/- 20%
     c_out.package = "0402"
     power_out.hv ~> c_out ~> power_out.lv
+
+    # Bulk output capacitor for Zigbee TX transients (19mA->120mA step)
+    # Without this, 101mA step into 11uF causes ~91mV sag at dropout margin
+    c_bulk = new Capacitor
+    c_bulk.capacitance = 100uF +/- 20%
+    c_bulk.package = "0805"
+    power_out.hv ~> c_bulk ~> power_out.lv

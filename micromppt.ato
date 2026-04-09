@@ -10,6 +10,7 @@ import ElectricLogic
 import Inductor
 import Capacitor
 import Resistor
+import Diode
 
 from "parts/STMicroelectronics_SPV1040T/STMicroelectronics_SPV1040T.ato" import STMicroelectronics_SPV1040T_package
 from "parts/JST_Sales_America_B2B_PH_K_S_LF__SN/JST_Sales_America_B2B_PH_K_S_LF__SN.ato" import JST_Sales_America_B2B_PH_K_S_LF__SN_package
@@ -36,8 +37,11 @@ module Micromppt:
     Vpv.lv ~ Vpv_Conn.2
     power.lv ~ Vpv_Conn.2
 
-    # Direct PV pass-through (OVP bypassed)
-    Vpv ~ Vpvr
+    # Solar input reverse polarity protection (Schottky diode)
+    D_rpv = new Diode
+    D_rpv.lcsc_id = "C8598"
+    Vpv.hv ~> D_rpv ~> Vpvr.hv
+    Vpv.lv ~ Vpvr.lv
 
     # Battery connector with reverse protection
     Vbatr = new ElectricPower
@@ -49,12 +53,13 @@ module Micromppt:
     ic = new STMicroelectronics_SPV1040T_package
 
     # Voltage divider for output voltage setting (Vout = 1.25 * (1 + R1/R2))
-    # R1=1M, R2=423k -> Vout ~4.2V (LiPo charge voltage)
+    # R1=1M, R2=422k -> Vout = 1.25*(1+1M/422k) = 4.214V (LiPo charge voltage)
+    # CRITICAL: 1% tolerance required — at 10%, R2 low (381k) gives Vout=4.53V (overcharge!)
     R1 = new Resistor
-    R1.resistance = 1Mohm +/- 10%
+    R1.resistance = 1Mohm +/- 1%
     R1.package = "0402"
     R2 = new Resistor
-    R2.resistance = 423kohm +/- 10%
+    R2.resistance = 422kohm +/- 1%
     R2.package = "0402"
 
     # MPP_SET filter resistor

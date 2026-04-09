@@ -1,0 +1,51 @@
+#pragma experiment("BRIDGE_CONNECT")
+
+"""
+GPIO-controlled P-FET high-side load switch.
+Active LOW: GPIO high = OFF, GPIO low = ON.
+Uses SI2301CDS (SOT-23, Vgs_th=-1.2V, Rdson=100mΩ, Id=-2.8A).
+LCSC: C10487.
+"""
+
+import ElectricPower
+import ElectricLogic
+import Resistor
+import Capacitor
+
+from "parts/SI2301CDS/SI2301CDS.ato" import SI2301CDS_package
+
+module HighSideSwitch:
+    """P-FET load switch with gate pull-up and optional soft-start."""
+
+    # External interfaces
+    power_in = new ElectricPower
+    power_out = new ElectricPower
+    enable = new ElectricLogic
+
+    # P-channel MOSFET (SI2301CDS, SOT-23)
+    fet = new SI2301CDS_package
+
+    # Gate pull-up (default OFF when MCU is in reset/tristate)
+    r_gate_pu = new Resistor
+    r_gate_pu.resistance = 100kohm +/- 5%
+    r_gate_pu.package = "0402"
+
+    # Gate drive resistor (limits inrush, slows dV/dt)
+    r_gate = new Resistor
+    r_gate.resistance = 10kohm +/- 5%
+    r_gate.package = "0402"
+
+    # Source = input power (high side)
+    power_in.hv ~ fet.S
+    # Drain = output power
+    fet.D ~ power_out.hv
+    # Ground shared
+    power_in.lv ~ power_out.lv
+
+    # Gate pull-up to source (default OFF)
+    power_in.hv ~> r_gate_pu ~> fet.G
+
+    # GPIO drives gate through series resistor
+    enable.line ~> r_gate ~> fet.G
+    enable.reference.hv ~ power_in.hv
+    enable.reference.lv ~ power_in.lv
