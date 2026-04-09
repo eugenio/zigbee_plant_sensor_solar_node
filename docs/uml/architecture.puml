@@ -1,0 +1,93 @@
+@startuml
+!theme plain
+title Zigbee Plant Sensor Solar Node — System Block Diagram
+
+' Power domain colors
+!define POWER_COLOR #FFE0B2
+!define SIGNAL_COLOR #E3F2FD
+!define SENSOR_COLOR #E8F5E9
+!define RF_COLOR #F3E5F5
+
+' === Power Source ===
+rectangle "Solar Panel\n(5V / 1W)" as solar POWER_COLOR
+
+' === Power Management ===
+package "Power Management" as pwr POWER_COLOR {
+    rectangle "SPV1040T\nMPPT Charger\n(Block A)" as mppt
+    rectangle "XB3306D\nBattery Protection\n(Block B)" as bpc
+    rectangle "HT7833\n3.3V LDO\n(Block C)" as ldo
+    rectangle "SI2301CDS\nMPPT Gate\n(Block H)" as mppt_gate
+    rectangle "SI2301CDS\nSensor Gate\n(Block H)" as sensor_gate
+}
+
+database "Li-Po Battery\n3.7V / 500mAh" as battery
+
+' === MCU ===
+package "MCU" as mcu_pkg RF_COLOR {
+    rectangle "ESP32-C6-MINI-1-N4\n(Block D)\nZigbee 802.15.4\nWiFi / BLE" as mcu
+    rectangle "USB-C\n(programming)" as usbc
+}
+
+' === Sensors ===
+package "Sensors (switched rail)" as sensors SENSOR_COLOR {
+    rectangle "SHT40\nTemp/Humidity\n(Block E)" as sht40
+    rectangle "VEML7700\nAmbient Light\n(Block E)" as veml7700
+    rectangle "Qwiic 1\nSoil Moisture\n(Block G)" as qwiic1
+    rectangle "Qwiic 2\nEC Sensor\n(Block G)" as qwiic2
+}
+
+' === Always-On Peripherals ===
+package "Always-On (3.3V rail)" as always_on SIGNAL_COLOR {
+    rectangle "MAX17048\nFuel Gauge\n(Block F)" as fuel_gauge
+    rectangle "ADS1115\n16-bit ADC\n(Block J)" as ads1115
+    rectangle "External NTC\n10k Probe\n(metal tip)" as ntc_probe
+}
+
+' === Power Flow ===
+solar --> mppt_gate : Vpv
+mppt_gate --> mppt : switched
+mppt --> bpc : Vbat (4.2V)
+bpc --> battery
+battery --> ldo : 3.0-4.2V
+ldo --> mcu : 3.3V
+ldo --> fuel_gauge : 3.3V (always on)
+ldo --> ads1115 : 3.3V (always on)
+ldo --> sensor_gate : 3.3V
+sensor_gate --> sht40 : switched 3.3V
+sensor_gate --> veml7700 : switched 3.3V
+sensor_gate --> qwiic1 : switched 3.3V
+sensor_gate --> qwiic2 : switched 3.3V
+
+' === Signal Flow ===
+mcu -[#0066CC]-> mppt_gate : GPIO0\n(active low)
+mcu -[#0066CC]-> sensor_gate : GPIO1\n(active low)
+fuel_gauge -[#CC0000]-> mcu : GPIO2\n(nALRT)
+
+' === I2C Bus ===
+mcu -[#009900]-> sht40 : I2C (0x44)
+mcu -[#009900]-> veml7700 : I2C (0x10)
+mcu -[#009900]-> fuel_gauge : I2C (0x36)
+mcu -[#009900]-> ads1115 : I2C (0x48)
+mcu -[#009900]-> qwiic1 : I2C
+mcu -[#009900]-> qwiic2 : I2C
+
+' === NTC Probe ===
+ntc_probe --> ads1115 : AIN0\n(voltage divider)
+battery --> fuel_gauge : CELL
+
+' === USB ===
+usbc --> mcu : USB D+/D-
+
+' === Legend ===
+legend right
+  |= Color |= Domain |
+  | <back:POWER_COLOR>   </back> | Power |
+  | <back:SIGNAL_COLOR>  </back> | Signal / Control |
+  | <back:SENSOR_COLOR>  </back> | Sensors |
+  | <back:RF_COLOR>      </back> | MCU / RF |
+  <color:#009900>Green lines</color> = I2C bus
+  <color:#0066CC>Blue lines</color> = GPIO control
+  <color:#CC0000>Red line</color> = Interrupt
+endlegend
+
+@enduml
