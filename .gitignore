@@ -92,10 +92,8 @@ venv.bak/
 .idea/
 .cursor/
 .windsurf/
-# .claude/ — track skills, agents, commands; exclude secrets
-.claude/mcp.json
-.claude/settings.local.json
-.claude/credentials.json
+# Claude Code config (entire directory)
+.claude/
 .mcp.json
 .github/instructions/
 .spyderproject
