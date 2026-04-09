@@ -120,6 +120,18 @@ KiCadRoutingTools/
 .cache/jlc/
 libraries/
 
+# Atopile vendored dependencies (reinstalled by `ato build`)
+parts/maxim-max17048/
+parts/sensirion-sht40/
+parts/vishay-veml7700/
+sparkfun-qwiic/
+
+# Enclosure STEP/OpenSCAD (regenerable)
+enclosure/
+
+# Downloaded datasheets (regenerable from LCSC)
+parts/**/*.pdf
+
 # Simulation outputs (regenerable)
 sim/*.raw
 sim/*.data
