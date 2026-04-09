@@ -132,6 +132,12 @@ enclosure/
 # Downloaded datasheets (regenerable from LCSC)
 parts/**/*.pdf
 
+# 3D models and KiCad symbols (regenerable via JLC library_install)
+parts/**/*.step
+parts/**/*.STEP
+parts/**/*.kicad_sym
+parts/**/*.3mf
+
 # Simulation outputs (regenerable)
 sim/*.raw
 sim/*.data
