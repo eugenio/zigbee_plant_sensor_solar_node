@@ -120,6 +120,23 @@ KiCadRoutingTools/
 .cache/jlc/
 libraries/
 
+# Simulation outputs (regenerable)
+sim/*.raw
+sim/*.data
+sim/*.plt
+sim/*.png
+solar_*.data
+solar_*.plt
+solar_*.raw
+
+# Mempalace artefacts
+entities.json
+mempalace.yaml
+
+# KiCad lock files
+*.kicad_pro.lck
+*_preroute.kicad_pcb
+
 # Misc
 .DS_Store
 .ato/

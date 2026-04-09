@@ -1,0 +1,17 @@
+[workspace]
+authors = ["Eugenio La Cava <eugeniolcv@gmail.com>"]
+channels = ["conda-forge"]
+name = "zigbee_plant_sensor_solar_node"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+gnuplot = ">=6.0.4,<7"
+matplotlib = ">=3.10.8,<4"
+numpy = ">=2.4.3,<3"
+
+[pypi-dependencies]
+circuit-synth = ">=0.12.1, <0.13"
+reportlab = ">=4.4.10, <5"
